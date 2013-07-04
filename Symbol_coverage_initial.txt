@@ -1,0 +1,61 @@
+$ make && prove -vb t/Symbol.t 
+cp lib/Symbol.pm blib/lib/Symbol.pm
+Manifying blib/man3/Symbol.3
+t/Symbol.t .. 
+1..19
+ok 1 - check $_ clobbering
+ok 2 - gensym() returns a GLOB
+ok 3 - gensym() returns a different GLOB
+ok 4 - got an IO ref
+ok 5 - assigns into glob OK
+ok 6 - leaves scalar alone
+ok 7 - warns like an unopened filehandle
+AAA
+CCC
+ok 8 - qualify() with a simple identifier
+AAA
+CCC
+ok 9 - qualify() with a package
+ok 10 - qualify() with a qualified identifier
+AAA
+BBB
+ok 11 - qualify() with a reserved identifier
+AAA
+BBB
+ok 12 - qualify() with a reserved identifier and a package
+AAA
+CCC
+ok 13 - qualify() with an identifier starting with a _
+AAA
+BBB
+ok 14 - qualify() with an identifier starting with a ^
+ok 15 - transient stash exists
+ok 16 - transient variable in stash
+DDD
+FFF
+GGG
+III
+ok 17 - transient variable no longer in stash
+ok 18 - transient stash is empty
+ok 19 - no transient stash
+ok
+All tests successful.
+Files=1, Tests=19,  6 wallclock secs ( 0.16 usr  0.06 sys +  0.14 cusr  0.05 csys =  0.41 CPU)
+Result: PASS
+
+Missing EEE and HHH
+
+    unless ($pkg =~ /^main::.*::$/) {
+print STDERR "DDD", "\n";
+#        $pkg = "main$pkg"  if  $pkg =~ /^::/;
+        if ($pkg =~ /^::/) {
+print STDERR "EEE", "\n";
+          $pkg = "main$pkg";
+        }
+
+
+#    return unless defined $stem_symtab and exists $stem_symtab->{$leaf};
+    unless (defined $stem_symtab and exists $stem_symtab->{$leaf}) {
+print STDERR "HHH", "\n";
+        return;
+    }

@@ -1,10 +1,11 @@
 #!./perl
 
-BEGIN {
-    chdir 't' if -d 't';
-    @INC = '../lib';
-}
+#BEGIN {
+#    chdir 't' if -d 't';
+#    @INC = '../lib';
+#}
 
+use blib;
 use Test::More tests => 19;
 
 BEGIN { $_ = 'foo'; }  # because Symbol used to clobber $_

@@ -18,21 +18,21 @@ Symbol - manipulate Perl symbols and their names
     # replace *FOO{IO} handle but not $FOO, %FOO, etc.
     *FOO = geniosym;
 
-    print qualify("x"), "\n";              # "main::x"
-    print qualify("x", "FOO"), "\n";       # "FOO::x"
-    print qualify("BAR::x"), "\n";         # "BAR::x"
-    print qualify("BAR::x", "FOO"), "\n";  # "BAR::x"
-    print qualify("STDOUT", "FOO"), "\n";  # "main::STDOUT" (global)
-    print qualify(\*x), "\n";              # returns \*x
-    print qualify(\*x, "FOO"), "\n";       # returns \*x
+print qualify("x"), "\n";              # "main::x"
+print qualify("x", "FOO"), "\n";       # "FOO::x"
+print qualify("BAR::x"), "\n";         # "BAR::x"
+print qualify("BAR::x", "FOO"), "\n";  # "BAR::x"
+print qualify("STDOUT", "FOO"), "\n";  # "main::STDOUT" (global)
+print qualify(\*x), "\n";              # returns \*x
+print qualify(\*x, "FOO"), "\n";       # returns \*x
 
     use strict refs;
-    print { qualify_to_ref $fh } "foo!\n";
+print { qualify_to_ref $fh } "foo!\n";
     $ref = qualify_to_ref $name, $pkg;
 
     use Symbol qw(delete_package);
     delete_package('Foo::Bar');
-    print "deleted\n" unless exists $Foo::{'Bar::'};
+print "deleted\n" unless exists $Foo::{'Bar::'};
 
 =head1 DESCRIPTION
 
@@ -116,17 +116,20 @@ sub ungensym ($) {}
 sub qualify ($;$) {
     my ($name) = @_;
     if (!ref($name) && index($name, '::') == -1 && index($name, "'") == -1) {
-	my $pkg;
-	# Global names: special character, "^xyz", or other. 
-	if ($name =~ /^(([^a-z])|(\^[a-z_]+))\z/i || $global{$name}) {
-	    # RGS 2001-11-05 : translate leading ^X to control-char
-	    $name =~ s/^\^([a-z_])/'qq(\c'.$1.')'/eei;
-	    $pkg = "main";
-	}
-	else {
-	    $pkg = (@_ > 1) ? $_[1] : caller;
-	}
-	$name = $pkg . "::" . $name;
+print STDERR "AAA", "\n";
+    	my $pkg;
+    	# Global names: special character, "^xyz", or other. 
+    	if ($name =~ /^(([^a-z])|(\^[a-z_]+))\z/i || $global{$name}) {
+print STDERR "BBB", "\n";
+    	    # RGS 2001-11-05 : translate leading ^X to control-char
+    	    $name =~ s/^\^([a-z_])/'qq(\c'.$1.')'/eei;
+    	    $pkg = "main";
+    	}
+    	else {
+print STDERR "CCC", "\n";
+    	    $pkg = (@_ > 1) ? $_[1] : caller;
+    	}
+    	$name = $pkg . "::" . $name;
     }
     $name;
 }
@@ -144,20 +147,38 @@ sub delete_package ($) {
     # expand to full symbol table name if needed
 
     unless ($pkg =~ /^main::.*::$/) {
-        $pkg = "main$pkg"	if	$pkg =~ /^::/;
-        $pkg = "main::$pkg"	unless	$pkg =~ /^main::/;
-        $pkg .= '::'		unless	$pkg =~ /::$/;
+print STDERR "DDD", "\n";
+#        $pkg = "main$pkg"	if	$pkg =~ /^::/;
+        if ($pkg =~ /^::/) {
+print STDERR "EEE", "\n";
+          $pkg = "main$pkg";
+        }
+#        $pkg = "main::$pkg"	unless	$pkg =~ /^main::/;
+        unless ($pkg =~ /^main::/) {
+print STDERR "FFF", "\n";
+            $pkg = "main::$pkg";
+        }
+#        $pkg .= '::'		unless	$pkg =~ /::$/;
+        unless($pkg =~ /::$/) {
+print STDERR "GGG", "\n";
+            $pkg .= '::';
+        }
     }
 
     my($stem, $leaf) = $pkg =~ m/(.*::)(\w+::)$/;
     my $stem_symtab = *{$stem}{HASH};
-    return unless defined $stem_symtab and exists $stem_symtab->{$leaf};
+#    return unless defined $stem_symtab and exists $stem_symtab->{$leaf};
+    unless (defined $stem_symtab and exists $stem_symtab->{$leaf}) {
+print STDERR "HHH", "\n";
+        return;
+    }
 
 
     # free all the symbols in the package
 
     my $leaf_symtab = *{$stem_symtab->{$leaf}}{HASH};
     foreach my $name (keys %$leaf_symtab) {
+print STDERR "III", "\n";
         undef *{$pkg . $name};
     }
 

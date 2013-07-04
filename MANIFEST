@@ -5,4 +5,4 @@ Todo
 Changes
 Makefile.PL
 lib/Symbol.pm
-t/001_load.t
+t/Symbol.t

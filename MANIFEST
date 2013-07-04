@@ -1,6 +1,7 @@
-MANIFEST
-README
 Changes
-Makefile.PL
 lib/Symbol.pm
+Makefile.PL
+MANIFEST
+MANIFEST.SKIP
+README
 t/Symbol.t
